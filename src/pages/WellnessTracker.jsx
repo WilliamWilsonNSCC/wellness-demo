@@ -20,7 +20,7 @@ export default function WellnessTracker() {
             date: new Date().toISOString()
         };
 
-        console.log("Wellness Entry: ".entry);
+        console.log("Wellness Entry: ", entry);
 
         //later: send to backend
     };
