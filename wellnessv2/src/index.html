@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NSCC Wellness Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ─── Tokens ────────────────────────────────────────────────────────────── */
+:root {
+  --cream:   #FAF6F0;
+  --parchment: #F2EBE0;
+  --warm-white: #FFFCF8;
+  --bark:    #5C4A32;
+  --muted:   #9B8B78;
+  --soft:    #C9BAA8;
+
+  --sage:    #4E7C6A;
+  --sage-lt: #EBF4F0;
+  --terra:   #B5674A;
+  --terra-lt:#FAF0EB;
+  --slate:   #5C6FA0;
+  --slate-lt:#EFF1F9;
+  --amber:   #B07C3C;
+  --amber-lt:#FBF4E8;
+  --moss:    #6A8C5A;
+  --moss-lt: #EEF4EA;
+
+  --danger:  #C0392B;
+  --danger-lt:#FEF0EE;
+
+  --shadow-sm: 0 2px 12px rgba(92,74,50,.07);
+  --shadow-md: 0 6px 28px rgba(92,74,50,.10);
+  --shadow-lg: 0 16px 48px rgba(92,74,50,.13);
+
+  --r-sm: 16px;
+  --r-md: 24px;
+  --r-lg: 32px;
+  --r-xl: 48px;
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: 'Nunito', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--bark);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Subtle grain texture */
+body::before {
+  content:'';
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  opacity: .4;
+}
+
+/* ─── Layout shell ───────────────────────────────────────────────────────── */
+.shell {
+  position: relative; z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 110px;
+}
+
+/* ─── Views (screen switching) ───────────────────────────────────────────── */
+.view { display: none; flex-direction: column; gap: 20px; padding: 24px 20px 8px; animation: fadeUp .4s ease both; }
+.view.active { display: flex; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+/* ─── Top bar ────────────────────────────────────────────────────────────── */
+.topbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 20px 4px;
+}
+.logo-mark {
+  width: 38px; height: 38px; border-radius: 12px;
+  background: var(--sage); display: flex; align-items: center; justify-content: center;
+  font-family: 'Lora', serif; font-weight: 700; font-size: 17px; color: #fff;
+  flex-shrink: 0;
+}
+.logo-text { flex: 1; }
+.logo-text h1 { font-family: 'Lora', serif; font-size: 15px; font-weight: 700; color: var(--bark); line-height: 1.2; }
+.logo-text p  { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--parchment); border: 2px solid var(--soft);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer;
+}
+
+/* ─── Nav tabs ───────────────────────────────────────────────────────────── */
+.nav-tabs {
+  display: flex; gap: 0;
+  margin: 0 20px;
+  background: var(--parchment);
+  border-radius: var(--r-xl);
+  padding: 4px;
+}
+.nav-tab {
+  flex: 1; border: none; background: transparent;
+  padding: 9px 6px; border-radius: var(--r-xl);
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700;
+  color: var(--muted); cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  transition: all .25s;
+}
+.nav-tab .tab-icon { font-size: 17px; }
+.nav-tab.active {
+  background: #fff; color: var(--sage);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ─── Card ───────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--warm-white);
+  border-radius: var(--r-lg);
+  padding: 22px 22px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255,255,255,.8);
+}
+.card-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+}
+
+/* ─── Section heading ────────────────────────────────────────────────────── */
+.section-head { font-family: 'Lora', serif; font-size: 22px; font-weight: 600; color: var(--bark); line-height: 1.3; }
+.section-sub  { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+
+/* ─── Greeting card ──────────────────────────────────────────────────────── */
+.greet-card {
+  background: linear-gradient(135deg, var(--sage) 0%, #3D6B5E 100%);
+  border-radius: var(--r-lg);
+  padding: 26px 24px;
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.greet-card::after {
+  content:''; position:absolute; top:-40px; right:-40px;
+  width:140px; height:140px; border-radius:50%;
+  background: rgba(255,255,255,.06);
+}
+.greet-card::before {
+  content:''; position:absolute; bottom:-30px; right:30px;
+  width:90px; height:90px; border-radius:50%;
+  background: rgba(255,255,255,.04);
+}
+.greet-card h2 { font-family:'Lora',serif; font-size:24px; font-weight:600; color:#fff; margin-bottom:4px; }
+.greet-card p  { font-size:13px; color:rgba(255,255,255,.75); line-height:1.5; }
+.greet-score {
+  display: inline-flex; align-items: baseline; gap: 4px;
+  background: rgba(255,255,255,.15); border-radius: 99px;
+  padding: 6px 16px; margin-top: 14px;
+}
+.greet-score .num { font-family:'Lora',serif; font-size:26px; font-weight:700; color:#fff; }
+.greet-score .denom { font-size:13px; color:rgba(255,255,255,.6); }
+.greet-score .lbl { font-size:11px; color:rgba(255,255,255,.6); margin-left:6px; }
+
+/* ─── Pillar arc cards ───────────────────────────────────────────────────── */
+.pillars-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.pillar-card {
+  background: var(--warm-white);
+  border-radius: var(--r-md);
+  padding: 18px 16px 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255,255,255,.9);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  cursor: pointer; transition: transform .2s, box-shadow .2s;
+  position: relative;
+}
+.pillar-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.pillar-card .p-label { font-size: 11px; font-weight: 700; color: var(--muted); text-align:center; line-height:1.3; }
+.pillar-card .p-icon  { font-size: 22px; }
+
+/* Arc SVG */
+.arc-wrap { position: relative; width: 80px; height: 50px; }
+.arc-wrap svg { overflow: visible; }
+.arc-value {
+  position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%);
+  font-family: 'Lora', serif; font-size: 19px; font-weight: 700;
+  line-height: 1;
+}
+
+/* Full-width fifth pillar */
+.pillar-card.wide {
+  grid-column: 1 / -1;
+  flex-direction: row; padding: 16px 20px;
+  align-items: center; gap: 20px;
+}
+.pillar-card.wide .arc-wrap { width: 70px; height: 44px; }
+.pillar-card.wide .p-label { text-align:left; }
+.pillar-card.wide .arc-value { font-size:17px; }
+.pillar-card.wide .wide-right { flex:1; }
+.pillar-card.wide .wide-right p { font-size:11px; color:var(--muted); line-height:1.5; margin-top:2px; }
+
+/* ─── Slider track (check-in view) ──────────────────────────────────────── */
+.pillar-checkin {
+  display: flex; flex-direction: column; gap: 22px;
+}
+.p-row { display: flex; flex-direction: column; gap: 10px; }
+.p-row-head { display: flex; align-items: center; gap: 10px; }
+.p-row-head .p-emoji { font-size: 22px; }
+.p-row-head .p-name  { font-family:'Lora',serif; font-size:16px; font-weight:600; color:var(--bark); }
+.p-row-head .p-num   { margin-left:auto; font-family:'Lora',serif; font-size:20px; font-weight:700; }
+.p-row-hint { font-size:11px; color:var(--muted); padding-left:32px; margin-top:-6px; }
+
+/* Custom range slider */
+.p-slider {
+  -webkit-appearance: none;
+  width: 100%; height: 6px;
+  border-radius: 99px;
+  outline: none; cursor: pointer;
+  transition: all .2s;
+}
+.p-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+  border: 3px solid currentColor;
+  cursor: grab;
+  transition: transform .15s;
+}
+.p-slider:active::-webkit-slider-thumb { transform: scale(1.15); cursor: grabbing; }
+
+/* ─── Composite score display ────────────────────────────────────────────── */
+.composite-bar-wrap { display:flex; flex-direction:column; gap:6px; }
+.composite-bar-head { display:flex; justify-content:space-between; align-items:baseline; }
+.composite-bar-head span:first-child { font-size:12px; color:var(--muted); font-weight:600; }
+.composite-bar-head span:last-child  { font-family:'Lora',serif; font-size:20px; font-weight:700; }
+.composite-track {
+  height: 10px; background: var(--parchment); border-radius:99px; overflow:hidden;
+}
+.composite-fill {
+  height: 100%; border-radius:99px;
+  transition: width .6s cubic-bezier(.34,1.56,.64,1);
+}
+.composite-msg { font-size:11px; color:var(--muted); font-style:italic; }
+
+/* ─── Wellbeing nudges ───────────────────────────────────────────────────── */
+.nudge-list { display:flex; flex-direction:column; gap:10px; }
+.nudge {
+  display:flex; align-items:flex-start; gap:10px;
+  background: var(--parchment); border-radius:var(--r-sm);
+  padding: 12px 14px;
+}
+.nudge-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.nudge p   { font-size:12px; color:var(--bark); line-height:1.55; }
+
+/* ─── Journal ────────────────────────────────────────────────────────────── */
+.journal-field {
+  width: 100%; min-height: 100px;
+  border: 1.5px solid var(--soft);
+  border-radius: var(--r-sm);
+  padding: 14px 16px;
+  font-family: 'Lora', serif; font-size:14px; color:var(--bark);
+  background: var(--warm-white); resize: vertical;
+  outline: none; line-height: 1.7;
+  transition: border-color .2s;
+}
+.journal-field:focus { border-color: var(--sage); }
+.journal-field::placeholder { color:var(--soft); }
+.journal-note {
+  display:flex; align-items:center; gap:6px; margin-top:6px;
+  font-size:10px; color:var(--muted);
+}
+.journal-note::before { content:'🔒'; font-size:11px; }
+
+/* ─── Buttons ────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: none; border-radius: var(--r-xl); padding: 13px 28px;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all .2s; letter-spacing: .2px;
+}
+.btn-primary   { background: var(--sage);  color: #fff; box-shadow: 0 4px 16px rgba(78,124,106,.35); }
+.btn-primary:hover   { transform:translateY(-1px); box-shadow:0 6px 20px rgba(78,124,106,.45); }
+.btn-secondary { background: var(--parchment); color: var(--bark); }
+.btn-secondary:hover { background: var(--soft); }
+.btn-ghost     { background: transparent; color: var(--muted); border: 1.5px solid var(--soft); }
+.btn-full      { width: 100%; }
+.btn-sm        { padding: 9px 18px; font-size: 12px; }
+
+/* ─── Support footer ─────────────────────────────────────────────────────── */
+.support-footer {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 480px;
+  padding: 12px 20px 20px;
+  background: linear-gradient(to top, var(--cream) 70%, transparent);
+  z-index: 100;
+}
+.support-bar {
+  background: var(--warm-white);
+  border-radius: var(--r-xl);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255,255,255,.9);
+  display: flex; align-items: center; gap: 8px;
+}
+.support-label { font-size:10px; color:var(--muted); font-weight:700; letter-spacing:.8px; text-transform:uppercase; flex-shrink:0; }
+.support-divider { width:1px; height:28px; background:var(--soft); flex-shrink:0; }
+.support-links { display:flex; gap:6px; flex:1; justify-content:space-between; }
+.sup-btn {
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;
+  border:none; background:transparent; cursor:pointer; padding:4px 6px;
+  border-radius:12px; transition:background .15s;
+}
+.sup-btn:hover { background:var(--parchment); }
+.sup-btn .s-icon  { font-size:18px; }
+.sup-btn .s-label { font-size:9px; font-weight:700; color:var(--muted); letter-spacing:.3px; text-align:center; line-height:1.2; }
+.sup-btn.crisis .s-icon  { font-size:20px; }
+.sup-btn.crisis .s-label { color:var(--danger); }
+
+/* ─── Wellness view (home) ───────────────────────────────────────────────── */
+.today-phrase {
+  font-family:'Lora',serif; font-size:13px; font-style:italic; color:var(--muted);
+  text-align:center; padding:4px 0 8px;
+}
+
+/* ─── Chat ───────────────────────────────────────────────────────────────── */
+.chat-persona-chip {
+  display:flex; align-items:center; gap:8px;
+  background:var(--parchment); border-radius:var(--r-xl); padding:8px 14px;
+  font-size:11px; color:var(--muted);
+}
+.chat-persona-chip strong { color:var(--bark); }
+.chat-messages { display:flex; flex-direction:column; gap:10px; }
+.chat-msg { display:flex; }
+.chat-msg.user  { justify-content:flex-end; }
+.bubble {
+  max-width:82%; padding:11px 15px; border-radius:20px;
+  font-size:13px; line-height:1.55; font-family:'Nunito',sans-serif;
+}
+.bubble.ai   { background:var(--warm-white); color:var(--bark); border:1px solid var(--soft); border-bottom-left-radius:6px; }
+.bubble.user { background:var(--sage); color:#fff; border-bottom-right-radius:6px; }
+.chat-input-wrap { display:flex; gap:8px; }
+.chat-input-wrap input {
+  flex:1; border:1.5px solid var(--soft); border-radius:var(--r-xl);
+  padding:11px 18px; font-family:'Nunito',sans-serif; font-size:13px; color:var(--bark);
+  background:var(--warm-white); outline:none; transition:border-color .2s;
+}
+.chat-input-wrap input:focus { border-color:var(--sage); }
+.chat-not-saved { font-size:10px; color:var(--muted); text-align:center; font-style:italic; margin-top:4px; }
+
+/* ─── Quick links view ───────────────────────────────────────────────────── */
+.resource-crisis {
+  background:linear-gradient(135deg, var(--danger), #A93226);
+  border-radius:var(--r-md); padding:20px 22px;
+  box-shadow: 0 6px 24px rgba(192,57,43,.22);
+}
+.resource-crisis h3 { font-family:'Lora',serif; font-size:18px; font-weight:600; color:#fff; margin-bottom:4px; }
+.resource-crisis p  { font-size:12px; color:rgba(255,255,255,.75); margin-bottom:14px; line-height:1.5; }
+.crisis-numbers { display:flex; flex-direction:column; gap:8px; }
+.crisis-num {
+  display:flex; align-items:center; gap:10px;
+  background:rgba(255,255,255,.15); border-radius:12px; padding:10px 14px;
+  border:none; cursor:pointer; transition:background .15s; text-align:left;
+}
+.crisis-num:hover { background:rgba(255,255,255,.25); }
+.crisis-num .cn-icon { font-size:18px; }
+.crisis-num .cn-text { flex:1; }
+.crisis-num .cn-name { font-size:12px; font-weight:700; color:#fff; }
+.crisis-num .cn-num  { font-size:11px; color:rgba(255,255,255,.75); }
+.crisis-num .cn-arr  { font-size:16px; color:rgba(255,255,255,.5); }
+
+.resource-cards { display:flex; flex-direction:column; gap:12px; }
+.res-card {
+  display:flex; align-items:center; gap:14px;
+  background:var(--warm-white); border-radius:var(--r-md); padding:16px 18px;
+  box-shadow:var(--shadow-sm); border:1px solid rgba(255,255,255,.9);
+  cursor:pointer; transition:transform .2s, box-shadow .2s;
+}
+.res-card:hover { transform:translateX(4px); box-shadow:var(--shadow-md); }
+.res-icon { font-size:28px; flex-shrink:0; }
+.res-body  { flex:1; }
+.res-body h4 { font-family:'Lora',serif; font-size:15px; font-weight:600; color:var(--bark); margin-bottom:2px; }
+.res-body p  { font-size:11px; color:var(--muted); line-height:1.4; }
+.res-arr { font-size:18px; color:var(--soft); }
+
+/* ─── Floating orb decoration ────────────────────────────────────────────── */
+.orb {
+  position:fixed; border-radius:50%; pointer-events:none; z-index:0;
+  filter:blur(60px); opacity:.18;
+}
+.orb-1 { width:280px; height:280px; background:var(--sage); top:-60px; right:-80px; }
+.orb-2 { width:200px; height:200px; background:var(--amber); bottom:120px; left:-60px; }
+
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+@keyframes drawArc { from { stroke-dashoffset: 251; } }
+.arc-animated { animation: drawArc .8s cubic-bezier(.34,1.56,.64,1) both; }
+
+/* ─── Submit success state ────────────────────────────────────────────────── */
+.success-state { display:none; flex-direction:column; align-items:center; gap:16px; text-align:center; padding:20px 0; }
+.success-state .success-icon { font-size:56px; }
+.success-state h3 { font-family:'Lora',serif; font-size:22px; font-weight:600; color:var(--sage); }
+.success-state p  { font-size:13px; color:var(--muted); line-height:1.6; max-width:260px; }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="shell">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="logo-mark">N</div>
+    <div class="logo-text">
+      <h1>NSCC Wellness Hub</h1>
+      <p>Nova Scotia Community College</p>
+    </div>
+    <div class="avatar">🌿</div>
+  </div>
+
+  <!-- Nav tabs -->
+  <div class="nav-tabs" style="margin-top:12px;">
+    <button class="nav-tab active" onclick="showView('home', this)">
+      <span class="tab-icon">🏡</span>Today
+    </button>
+    <button class="nav-tab" onclick="showView('checkin', this)">
+      <span class="tab-icon">✦</span>Check In
+    </button>
+    <button class="nav-tab" onclick="showView('chat', this)">
+      <span class="tab-icon">💬</span>Chat
+    </button>
+    <button class="nav-tab" onclick="showView('resources', this)">
+      <span class="tab-icon">🌱</span>Support
+    </button>
+  </div>
+
+  <!-- ══ HOME VIEW ════════════════════════════════════════════════════════ -->
+  <div id="view-home" class="view active">
+
+    <!-- Greeting -->
+    <div class="greet-card">
+      <h2>Good morning, Dylan.</h2>
+      <p>It's Wednesday — week 10 of your semester.<br>How are you showing up today?</p>
+      <div class="greet-score">
+        <span class="num">6.9</span>
+        <span class="denom">/ 10</span>
+        <span class="lbl">· Your wellness today</span>
+      </div>
+    </div>
+
+    <p class="today-phrase">"Small moments of care add up to a whole life."</p>
+
+    <!-- Composite bar -->
+    <div class="card">
+      <div class="card-label">Overall Wellness Score</div>
+      <div class="composite-bar-wrap">
+        <div class="composite-bar-head">
+          <span>Today's balance</span>
+          <span style="color:var(--sage)">6.9</span>
+        </div>
+        <div class="composite-track">
+          <div class="composite-fill" style="width:69%; background:linear-gradient(90deg, var(--sage), #6BAF94);"></div>
+        </div>
+        <p class="composite-msg">Good — you're holding a healthy balance across your pillars.</p>
+      </div>
+    </div>
+
+    <!-- Pillar arc cards -->
+    <div>
+      <div class="card-label" style="padding:0 4px 8px">Your Five Pillars</div>
+      <div class="pillars-grid">
+
+        <!-- Sleep -->
+        <div class="pillar-card" onclick="showView('checkin',document.querySelector('[onclick*=checkin]'))">
+          <span class="p-icon">🌙</span>
+          <div class="arc-wrap">
+            <svg width="80" height="50" viewBox="0 0 80 50">
+              <path d="M 8 48 A 36 36 0 0 1 72 48" fill="none" stroke="#EBF4F0" stroke-width="7" stroke-linecap="round"/>
+              <path class="arc-animated" d="M 8 48 A 36 36 0 0 1 72 48" fill="none" stroke="var(--sage)" stroke-width="7" stroke-linecap="round"
+                stroke-dasharray="113" stroke-dashoffset="33"/>
+            </svg>
+            <div class="arc-value" style="color:var(--sage)">7.2</div>
+          </div>
+          <div class="p-label">Sleep<br>Quality</div>
+        </div>
+
+        <!-- Stress -->
+        <div class="pillar-card" onclick="showView('checkin',document.querySelector('[onclick*=checkin]'))">
+          <span class="p-icon">🌊</span>
+          <div class="arc-wrap">
+            <svg width="80" height="50" viewBox="0 0 80 50">
+              <path d="M 8 48 A 36 36 0 0 1 72 48" fill="none" stroke="var(--terra-lt)" stroke-width="7" stroke-linecap="round"/>
+              <path class="arc-animated" d="M 8 48 A 36 36 0 0 1 72 48" fill="none" stroke="var(--terra)" stroke-width="7" stroke-linecap="round"
+                stroke-dasharray="113" stroke-dashoffset="47" style="animation-delay:.1s"/>
+            </svg>
+            <div class="arc-value" style="color:var(--terra)">5.8</div>
+          </div>
+          <div class="p-label">Perceived<br>Stress</div>
+        </div>
+
+        <!-- Cognitive -->
+        <div class="pillar-card" onclick="showView('checkin',document.querySelector('[onclick*=checkin]'))">
+          <span class="p-icon">✨</span>
+          <div class="arc-wrap">
+            <svg width="80" height="50" viewBox="0 0 80 50">
+              <path d="M 8 48 A 36 36 0 0 1 72 48" fill="none" stroke="var(--slate-lt)" stroke-width="7" stroke-linecap="round"/>
+              <path class="arc-animated" d="M 8 48 A 36 36 0 0 1 72 48" fill="none" stroke="var(--slate)" stroke-width="7" stroke-linecap="round"
+                stroke-dasharray="113" stroke-dashoffset="40" style="animation-delay:.2s"/>
+            </svg>
+            <div class="arc-value" style="color:var(--slate)">6.5</div>
+          </div>
+          <div class="p-label">Cognitive<br>Energy</div>
+        </div>
+
+        <!-- Social -->
+        <div class="pillar-card" onclick="showView('checkin',document.querySelector('[onclick*=checkin]'))">
+          <span class="p-icon">🤲</span>
+          <div class="arc-wrap">
+            <svg width="80" height="50" viewBox="0 0 80 50">
+              <path d="M 8 48 A 36 36 0 0 1 72 48" fill="none" stroke="var(--amber-lt)" stroke-width="7" stroke-linecap="round"/>
+              <path class="arc-animated" d="M 8 48 A 36 36 0 0 1 72 48" fill="none" stroke="var(--amber)" stroke-width="7" stroke-linecap="round"
+                stroke-dasharray="113" stroke-dashoffset="21" style="animation-delay:.3s"/>
+            </svg>
+            <div class="arc-value" style="color:var(--amber)">8.1</div>
+          </div>
+          <div class="p-label">Social<br>Belonging</div>
+        </div>
+
+        <!-- Food Security — wide -->
+        <div class="pillar-card wide">
+          <span class="p-icon" style="font-size:28px">🍃</span>
+          <div class="wide-right">
+            <div class="p-label" style="font-size:12px; color:var(--bark); font-weight:700;">Food Security</div>
+            <p>Access to nourishing food supports every other pillar. <a href="#" style="color:var(--moss);font-weight:700;">NSCC resources →</a></p>
+          </div>
+          <div style="text-align:center;">
+            <div class="arc-wrap">
+              <svg width="70" height="44" viewBox="0 0 80 50">
+                <path d="M 8 48 A 36 36 0 0 1 72 48" fill="none" stroke="var(--moss-lt)" stroke-width="7" stroke-linecap="round"/>
+                <path class="arc-animated" d="M 8 48 A 36 36 0 0 1 72 48" fill="none" stroke="var(--moss)" stroke-width="7" stroke-linecap="round"
+                  stroke-dasharray="113" stroke-dashoffset="56" style="animation-delay:.4s"/>
+              </svg>
+              <div class="arc-value" style="color:var(--moss); font-size:15px">5.0</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Wellbeing nudges -->
+    <div class="card">
+      <div class="card-label">Today's Wellbeing Reflections</div>
+      <div class="nudge-list">
+        <div class="nudge">
+          <div class="nudge-dot" style="background:var(--sage)"></div>
+          <p>Your sleep is solid. A consistent bedtime routine is one of the most powerful things you can do for your wellbeing.</p>
+        </div>
+        <div class="nudge">
+          <div class="nudge-dot" style="background:var(--terra)"></div>
+          <p>Stress is moderate this week. Even a 5-minute pause between tasks can lower cortisol meaningfully.</p>
+        </div>
+        <div class="nudge">
+          <div class="nudge-dot" style="background:var(--amber)"></div>
+          <p>Your sense of belonging is high — that's a real buffer against burnout. Nurture those connections.</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full" onclick="showView('checkin',document.querySelector('[onclick*=checkin]'))">
+      ✦ &nbsp; Update today's check-in
+    </button>
+
+  </div>
+
+  <!-- ══ CHECK-IN VIEW ═════════════════════════════════════════════════════ -->
+  <div id="view-checkin" class="view">
+    <div>
+      <h2 class="section-head">How are you today?</h2>
+      <p class="section-sub">Take a moment. Be honest with yourself — this is just for you.</p>
+    </div>
+
+    <div class="card">
+      <div class="pillar-checkin" id="pillar-checkin">
+
+        <!-- Sleep -->
+        <div class="p-row">
+          <div class="p-row-head">
+            <span class="p-emoji">🌙</span>
+            <span class="p-name">Sleep Quality</span>
+            <span class="p-num" id="val-sleep" style="color:var(--sage)">7</span>
+          </div>
+          <p class="p-row-hint">How rested do you feel after last night?</p>
+          <input type="range" class="p-slider" min="0" max="10" value="7"
+            style="background:linear-gradient(90deg,var(--sage) 70%,var(--parchment) 70%); color:var(--sage);"
+            oninput="updateSlider(this,'sleep','var(--sage)')"/>
+        </div>
+
+        <!-- Stress -->
+        <div class="p-row">
+          <div class="p-row-head">
+            <span class="p-emoji">🌊</span>
+            <span class="p-name">Perceived Stress</span>
+            <span class="p-num" id="val-stress" style="color:var(--terra)">5</span>
+          </div>
+          <p class="p-row-hint">How pressured or overwhelmed do you feel?</p>
+          <input type="range" class="p-slider" min="0" max="10" value="5"
+            style="background:linear-gradient(90deg,var(--terra) 50%,var(--parchment) 50%); color:var(--terra);"
+            oninput="updateSlider(this,'stress','var(--terra)')"/>
+        </div>
+
+        <!-- Cognitive -->
+        <div class="p-row">
+          <div class="p-row-head">
+            <span class="p-emoji">✨</span>
+            <span class="p-name">Cognitive Energy</span>
+            <span class="p-num" id="val-cog" style="color:var(--slate)">6</span>
+          </div>
+          <p class="p-row-hint">How sharp and focused does your mind feel?</p>
+          <input type="range" class="p-slider" min="0" max="10" value="6"
+            style="background:linear-gradient(90deg,var(--slate) 60%,var(--parchment) 60%); color:var(--slate);"
+            oninput="updateSlider(this,'cog','var(--slate)')"/>
+        </div>
+
+        <!-- Social -->
+        <div class="p-row">
+          <div class="p-row-head">
+            <span class="p-emoji">🤲</span>
+            <span class="p-name">Social Belonging</span>
+            <span class="p-num" id="val-social" style="color:var(--amber)">8</span>
+          </div>
+          <p class="p-row-hint">How connected and supported do you feel?</p>
+          <input type="range" class="p-slider" min="0" max="10" value="8"
+            style="background:linear-gradient(90deg,var(--amber) 80%,var(--parchment) 80%); color:var(--amber);"
+            oninput="updateSlider(this,'social','var(--amber)')"/>
+        </div>
+
+        <!-- Food -->
+        <div class="p-row">
+          <div class="p-row-head">
+            <span class="p-emoji">🍃</span>
+            <span class="p-name">Food Security</span>
+            <span class="p-num" id="val-food" style="color:var(--moss)">5</span>
+          </div>
+          <p class="p-row-hint">How confident are you in accessing nourishing food today?</p>
+          <input type="range" class="p-slider" min="0" max="10" value="5"
+            style="background:linear-gradient(90deg,var(--moss) 50%,var(--parchment) 50%); color:var(--moss);"
+            oninput="updateSlider(this,'food','var(--moss)')"/>
+        </div>
+
+      </div>
+
+      <!-- Live composite -->
+      <div style="margin-top:22px; padding-top:18px; border-top:1px solid var(--parchment);">
+        <div class="composite-bar-wrap">
+          <div class="composite-bar-head">
+            <span>Composite Wellness</span>
+            <span id="comp-score" style="color:var(--sage)">6.2</span>
+          </div>
+          <div class="composite-track">
+            <div id="comp-fill" class="composite-fill" style="width:62%; background:linear-gradient(90deg,var(--sage),#6BAF94);"></div>
+          </div>
+          <p id="comp-msg" class="composite-msg">Good — you're in a balanced place today.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journal -->
+    <div class="card">
+      <div class="card-label">A moment to reflect — optional</div>
+      <textarea class="journal-field" placeholder="What's on your mind today? There's no right answer..."></textarea>
+      <div class="journal-note">This entry is encrypted. Only you can ever read it.</div>
+    </div>
+
+    <!-- CTA -->
+    <div id="checkin-form" style="display:flex; flex-direction:column; gap:10px;">
+      <button class="btn btn-primary btn-full" onclick="submitCheckin()">
+        Save today's check-in &nbsp;→
+      </button>
+      <button class="btn btn-ghost btn-full btn-sm" onclick="showView('home',document.querySelector('.nav-tab'))">
+        Maybe later
+      </button>
+    </div>
+
+    <!-- Success state (hidden) -->
+    <div class="success-state" id="checkin-success">
+      <div class="success-icon">🌿</div>
+      <h3>Check-in saved.</h3>
+      <p>Thank you for taking that moment for yourself. It matters more than you know.</p>
+      <button class="btn btn-primary" onclick="showView('home',document.querySelector('.nav-tab'))">
+        Back to home
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ CHAT VIEW ════════════════════════════════════════════════════════ -->
+  <div id="view-chat" class="view">
+    <div>
+      <h2 class="section-head">Wellness Companion</h2>
+      <p class="section-sub">A safe space to talk. Not a therapist — a caring presence.</p>
+    </div>
+
+    <div class="chat-persona-chip">
+      <span>🌿</span>
+      <span><strong>Wellness Companion</strong> · Your score today: <strong style="color:var(--sage)">6.9</strong> · This chat is not saved</span>
+    </div>
+
+    <div class="card">
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-msg">
+          <div class="bubble ai">Hi Dylan 👋 I can see your stress is a little elevated today. How are you feeling right now — in your own words?</div>
+        </div>
+        <div class="chat-msg user">
+          <div class="bubble user">A bit overwhelmed honestly. Exams are coming up.</div>
+        </div>
+        <div class="chat-msg">
+          <div class="bubble ai">That's completely understandable — week 10 is a heavy time. The fact that you checked in today says something good about you. Is there one specific thing that's sitting heaviest right now?</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <div class="chat-input-wrap">
+        <input type="text" id="chat-input" placeholder="Talk to me…" onkeydown="if(event.key==='Enter')sendChat()"/>
+        <button class="btn btn-primary btn-sm" onclick="sendChat()">Send</button>
+      </div>
+      <p class="chat-not-saved">This conversation is private and is not stored anywhere.</p>
+    </div>
+
+    <div class="card" style="background:var(--sage-lt); border:1px solid var(--sage)22;">
+      <div class="card-label" style="color:var(--sage)">Ready to talk to someone?</div>
+      <p style="font-size:12px;color:var(--bark);line-height:1.6;margin-bottom:12px;">Your Wellness Companion is here for everyday support. For deeper conversations, NSCC counsellors are available in-person or online.</p>
+      <button class="btn btn-primary btn-sm" onclick="showView('resources',document.querySelectorAll('.nav-tab')[3])">
+        📅 &nbsp; Book a counselling session
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ RESOURCES VIEW ═══════════════════════════════════════════════════ -->
+  <div id="view-resources" class="view">
+    <div>
+      <h2 class="section-head">Support is here.</h2>
+      <p class="section-sub">You don't have to navigate this alone. Here's what's available to you right now.</p>
+    </div>
+
+    <!-- Crisis — always first -->
+    <div class="resource-crisis">
+      <h3>🆘 &nbsp;Crisis Support</h3>
+      <p>If you are in crisis or unsafe, please reach out right now. These lines are always open.</p>
+      <div class="crisis-numbers">
+        <button class="crisis-num" onclick="alert('Calling Here 24/7…')">
+          <span class="cn-icon">📞</span>
+          <div class="cn-text">
+            <div class="cn-name">Here 24/7 — Nova Scotia</div>
+            <div class="cn-num">1-800-268-9700 · Free · Confidential</div>
+          </div>
+          <span class="cn-arr">›</span>
+        </button>
+        <button class="crisis-num" onclick="alert('Connecting to NSCC Crisis Line…')">
+          <span class="cn-icon">💛</span>
+          <div class="cn-text">
+            <div class="cn-name">NSCC Student Crisis Line</div>
+            <div class="cn-num">Available through Student Services</div>
+          </div>
+          <span class="cn-arr">›</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Other resources -->
+    <div class="resource-cards">
+
+      <div class="res-card">
+        <span class="res-icon">🪴</span>
+        <div class="res-body">
+          <h4>NSCC Counselling</h4>
+          <p>Book a session with an NSCC counsellor. In-person at your campus or virtually — your choice.</p>
+        </div>
+        <span class="res-arr">›</span>
+      </div>
+
+      <div class="res-card">
+        <span class="res-icon">🫂</span>
+        <div class="res-body">
+          <h4>Peer Support Programs</h4>
+          <p>Connect with trained student peers who've been through similar experiences.</p>
+        </div>
+        <span class="res-arr">›</span>
+      </div>
+
+      <div class="res-card">
+        <span class="res-icon">🍎</span>
+        <div class="res-body">
+          <h4>Food Security Resources</h4>
+          <p>Campus food banks, meal programs, and emergency support — no questions asked.</p>
+        </div>
+        <span class="res-arr">›</span>
+      </div>
+
+      <div class="res-card">
+        <span class="res-icon">🌬</span>
+        <div class="res-body">
+          <h4>Guided Breathing & Mindfulness</h4>
+          <p>Short, evidence-based exercises you can do right now to ease stress.</p>
+        </div>
+        <span class="res-arr">›</span>
+      </div>
+
+      <div class="res-card">
+        <span class="res-icon">📚</span>
+        <div class="res-body">
+          <h4>Academic Accommodations</h4>
+          <p>Wellness affects academic performance. Accommodation support is available.</p>
+        </div>
+        <span class="res-arr">›</span>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /shell -->
+
+<!-- ══ SUPPORT FOOTER (always visible) ══════════════════════════════════════ -->
+<div class="support-footer">
+  <div class="support-bar">
+    <span class="support-label">Support</span>
+    <div class="support-divider"></div>
+    <div class="support-links">
+      <button class="sup-btn crisis" onclick="showView('resources',document.querySelectorAll('.nav-tab')[3])">
+        <span class="s-icon">🆘</span>
+        <span class="s-label" style="color:var(--danger)">Crisis<br>Line</span>
+      </button>
+      <button class="sup-btn" onclick="showView('resources',document.querySelectorAll('.nav-tab')[3])">
+        <span class="s-icon">🪴</span>
+        <span class="s-label">Book<br>Counsellor</span>
+      </button>
+      <button class="sup-btn" onclick="showView('chat',document.querySelectorAll('.nav-tab')[2])">
+        <span class="s-icon">💬</span>
+        <span class="s-label">Wellness<br>Chat</span>
+      </button>
+      <button class="sup-btn" onclick="showView('resources',document.querySelectorAll('.nav-tab')[3])">
+        <span class="s-icon">🫂</span>
+        <span class="s-label">Peer<br>Support</span>
+      </button>
+      <button class="sup-btn" onclick="showView('resources',document.querySelectorAll('.nav-tab')[3])">
+        <span class="s-icon">🍎</span>
+        <span class="s-label">Food<br>Security</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── View switching ────────────────────────────────────────────────────────────
+function showView(id, triggerEl) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  if (triggerEl && triggerEl.classList && triggerEl.classList.contains('nav-tab')) {
+    triggerEl.classList.add('active');
+  } else {
+    // Find matching nav tab
+    const tabs = document.querySelectorAll('.nav-tab');
+    const idx = ['home','checkin','chat','resources'].indexOf(id);
+    if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active');
+  }
+  window.scrollTo(0, 0);
+}
+
+// ── Slider logic ──────────────────────────────────────────────────────────────
+const HINTS = {
+  val  : [0,1,2,3,4,5,6,7,8,9,10],
+  color: ['var(--danger)','var(--danger)','var(--danger)','var(--terra)','var(--terra)','var(--terra)','var(--sage)','var(--sage)','var(--amber)','var(--amber)','var(--moss)'],
+};
+const MSGS = [
+  "You're going through something hard. Please reach out to support today.",
+  "Things feel very difficult right now. The support footer below connects you.",
+  "This is a tough day. Be gentle with yourself.",
+  "A challenging stretch — take it one hour at a time.",
+  "Moderate — some areas need a little attention.",
+  "In the middle — some ups, some downs.",
+  "Good — you're in a balanced place today.",
+  "Doing well — keep nurturing what's working.",
+  "Strong — your pillars are in good shape.",
+  "Excellent — this is a really good day.",
+  "You're at your best — savour this and share it."
+];
+
+function getSliderVars() {
+  const s = +document.querySelector('[oninput*=sleep]').value;
+  const st = +document.querySelector('[oninput*=stress]').value;
+  const c = +document.querySelector('[oninput*=cog]').value;
+  const so = +document.querySelector('[oninput*=social]').value;
+  const f = +document.querySelector('[oninput*=food]').value;
+  return { s, st, c, so, f };
+}
+
+function updateSlider(el, key, colorVar) {
+  const val = +el.value;
+  const pct = val * 10;
+  el.style.background = `linear-gradient(90deg, ${colorVar} ${pct}%, var(--parchment) ${pct}%)`;
+  document.getElementById('val-' + key).textContent = val;
+  updateComposite();
+}
+
+function updateComposite() {
+  const { s, st, c, so, f } = getSliderVars();
+  const score = ((s + (10 - st) + c + so + f) / 5);
+  const rounded = Math.round(score * 10) / 10;
+  const idx = Math.min(10, Math.round(score));
+  const color = HINTS.color[idx];
+  const fill = document.getElementById('comp-fill');
+  const scoreEl = document.getElementById('comp-score');
+  const msgEl = document.getElementById('comp-msg');
+  if (fill) { fill.style.width = (score * 10) + '%'; fill.style.background = `linear-gradient(90deg,${color},${color}aa)`; }
+  if (scoreEl) { scoreEl.textContent = rounded.toFixed(1); scoreEl.style.color = color; }
+  if (msgEl) msgEl.textContent = MSGS[idx];
+}
+
+// ── Check-in submit ───────────────────────────────────────────────────────────
+function submitCheckin() {
+  document.getElementById('checkin-form').style.display = 'none';
+  document.getElementById('pillar-checkin').style.opacity = '.4';
+  document.getElementById('pillar-checkin').style.pointerEvents = 'none';
+  const s = document.getElementById('checkin-success');
+  s.style.display = 'flex';
+  s.style.animation = 'fadeUp .5s ease both';
+}
+
+// ── Chat ──────────────────────────────────────────────────────────────────────
+const AI_REPLIES = [
+  "That makes complete sense. Exam season puts pressure on every pillar at once. What's one small thing that's helped you feel grounded this week, even briefly?",
+  "You're carrying a lot, and you're still showing up. That takes real strength. Have you been able to sleep okay with everything on your plate?",
+  "It sounds like you need some space to breathe. Your Social Belonging score is actually quite strong — is there someone you could reach out to today, even just for a few minutes?",
+  "I hear you. Sometimes just naming what's heavy helps a little. Remember — NSCC counsellors are available if you'd like to talk to a human. I can help you find a booking link.",
+  "One step at a time. What would feel most supportive right now — talking it through more, or exploring some resources together?",
+];
+let replyIdx = 0;
+
+function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const container = document.getElementById('chat-messages');
+
+  // User message
+  const userDiv = document.createElement('div');
+  userDiv.className = 'chat-msg user';
+  userDiv.innerHTML = `<div class="bubble user">${msg}</div>`;
+  container.appendChild(userDiv);
+
+  // Typing indicator
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'chat-msg';
+  typingDiv.innerHTML = `<div class="bubble ai" style="color:var(--soft)">…</div>`;
+  container.appendChild(typingDiv);
+  container.scrollTop = container.scrollHeight;
+
+  setTimeout(() => {
+    typingDiv.remove();
+    const aiDiv = document.createElement('div');
+    aiDiv.className = 'chat-msg';
+    aiDiv.innerHTML = `<div class="bubble ai">${AI_REPLIES[replyIdx++ % AI_REPLIES.length]}</div>`;
+    container.appendChild(aiDiv);
+    container.scrollTop = container.scrollHeight;
+  }, 1000);
+}
+</script>
+</body>
+</html>
