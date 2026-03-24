@@ -1,6 +1,22 @@
 import { Link } from 'react-router-dom';
+import { useMsal, useIsAuthenticated } from '@azure/msal-react';
+import { msalRequest } from '../authConfig';
+ 
+export default function Navbar() {
+    // ✅ useMsal() is correctly inside a React component now
+    const { instance, accounts } = useMsal();
+    const isAuthenticated = useIsAuthenticated();
+    const userName = accounts[0]?.name;
+    
+    const handleLogin = () => {
+        instance.loginRedirect(msalRequest).catch(console.error);
+    };
+    
+    const handleLogout = () => {
+        instance.logoutRedirect({postLogoutRedirectUri: `http://localhost:5173/` })
+        .catch(console.error);
+    };
 
-export default function Navbar(){
     return(
         <nav className="navbar">
             <div className="nav-left">
@@ -8,7 +24,18 @@ export default function Navbar(){
                 <Link to="/tracker">Wellness Tracker</Link> | {" "}
             </div>
             <div className="nav-right">
-               <Link to="/login" className="login-link">Login</Link>  {"  "}
+                {isAuthenticated ? (
+                <>
+                    {userName && <span style={{ marginRight: '1rem', fontSize: '0.9rem', color: '#213547' }}>{userName}</span>}
+                    <button className="login-link" onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                    Sign Out
+                    </button>
+                </>
+                ) : (
+                <button className="login-link" onClick={handleLogin} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                    Sign In
+                </button>
+                )}
             </div>
         </nav>
     );

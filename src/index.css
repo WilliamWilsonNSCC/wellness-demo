@@ -1,17 +1,16 @@
 :root {
-  --navbar-bg: #E6F2FF; /* your navbar color */ 
-  --page-bg: #FAFCFF; /* soft, welcoming background */ 
-  --text-color: #213547; /* calm, readable dark blue-grey */ 
-  --font-main: system-ui, Avenir, Helvetica, Arial, sans-serif; 
-  
-  font-family: var(--font-main); 
-  line-height: 1.5; 
-  font-weight: 400; 
-  
-  color: var(--text-color); 
-  background-color: var(--page-bg); 
-  text-rendering: optimizeLegibility; 
-  -webkit-font-smoothing: antialiased; 
+  --navbar-bg: #E6F2FF;
+  --page-bg: #FAFCFF;
+  --text-color: #213547;
+  --font-main: system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  font-family: var(--font-main);
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text-color);
+  background-color: var(--page-bg);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
@@ -22,68 +21,73 @@ body {
   background-color: var(--page-bg);
 }
 
-/* Navigation bar */
-.navbar{
-  background-color: "var(--navbar-bg)";
-  padding: "1rem";
+/* ── Navbar ────────────────────────────────────────────────────────────────── */
+/* ✅ Fixed: removed quotes around property values (e.g. "var(--navbar-bg)" → var(--navbar-bg)) */
+.navbar {
+  background-color: var(--navbar-bg);
+  padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: "sticky";
-  width: "100%";
+  position: sticky;
+  width: 100%;
   top: 0;
   z-index: 1000;
+  box-sizing: border-box;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
-/* Left side links */
+
 .nav-left a {
   padding-left: 0.5rem;
   margin-right: 1rem;
   color: #213547;
-  text-decoration: none;font-weight: 500;
+  text-decoration: none;
+  font-weight: 500;
 }
-/* right side links */
-.nav-right{
+
+.nav-right {
   padding-right: 1rem;
 }
+
 .nav-right .login-link {
   color: #213547;
   text-decoration: none;
   font-weight: 600;
 }
-/* Hover effect */
-.navbar a:hover{
+
+.navbar a:hover,
+.navbar button:hover {
   color: #2c5c8a;
 }
 
-/* Login page elements */
-.login-container{
+/* ── Login page ────────────────────────────────────────────────────────────── */
+.login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height:80vh;
+  min-height: 80vh;
 }
-/* login card */
-.login-card{
+
+.login-card {
   background: white;
   padding: 2rem;
   border-radius: 12px;
   width: 400px;
-  box-shadow: 0 4px, 20px, rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   text-align: center;
 }
-/*Form Field*/
-.login-form input{
+
+.login-form input {
   width: 80%;
   padding: 0.8rem;
   margin: 0.5rem 0;
   border-radius: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid #cfd9e6;
   font-size: 1rem;
-  color: #213547;border: 1px solid #cfd9e6;
-  font-size: 1rem;
+  color: #213547;
 }
-/* Login Button */
-.login-form button{
+
+.login-form button {
   width: 80%;
   padding: 0.8rem;
   margin-top: 1rem;
@@ -95,11 +99,12 @@ body {
   cursor: pointer;
   transition: background 0.2s ease;
 }
-.login-form button:hover{
+
+.login-form button:hover {
   background-color: #d4e8ff;
 }
 
-/* Wellness Tracker */
+/* ── Wellness Tracker ──────────────────────────────────────────────────────── */
 .tracker-container {
   max-width: 600px;
   margin: 2rem auto;
@@ -108,26 +113,32 @@ body {
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
+
 .tracker-form {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
 }
+
 .tracker-form label {
   font-weight: 600;
   color: #213547;
 }
+
 .tracker-form input[type="range"] {
   width: 100%;
 }
+
 .tracker-form textarea {
-  width:100%;
+  width: 100%;
   min-height: 120px;
   padding: 0.8rem;
   border-radius: 8px;
   border: 1px solid #cfd9e6;
   resize: vertical;
+  box-sizing: border-box;
 }
+
 .tracker-form button {
   background-color: #E6F2FF;
   color: #213547;
@@ -136,9 +147,14 @@ body {
   border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
+  transition: background 0.2s ease;
 }
+
 .tracker-form button:hover {
   background-color: #d4e8ff;
 }
-@media (prefers-color-scheme: light) {
+
+.tracker-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
