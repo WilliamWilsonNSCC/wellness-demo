@@ -22,6 +22,7 @@ export default function Navbar() {
             <div className="nav-left">
                 <Link to="/">Home</Link> | {" "}
                 <Link to="/tracker">Wellness Tracker</Link> | {" "}
+                <Link to="/resources">Resources</Link> | {" "}
             </div>
             <div className="nav-right">
                 {isAuthenticated ? (

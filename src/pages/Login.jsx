@@ -21,7 +21,7 @@ export default function Login() {
 
                     <button type="submit">Login</button>
                 </form> */}
-                <button onClick={() => instance.loginRedirect(msalRequest)}>
+                <button onClick={handleLogin}>
                     Sign in with Microsoft
                 </button>
             </div> 
