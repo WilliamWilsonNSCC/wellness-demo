@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import './resources.css';
+import '../resources.css';
 
 const API_URL = 'http://localhost:3001/api/wellness';
 
