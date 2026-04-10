@@ -258,7 +258,7 @@ export default function Home() {
             <header className="dashboard-header">
                 <div className="header-left">
                     <div className="hub-tag">
-                        <svg width="12" height="12" viewBox="0 0 14 14" fill="var(--nscc-teal)"><path d="M7 0L0 3V7C0 10.3 3.1 13.3 7 14C10.9 13.3 14 10.3 14 7V3L7 0Z" opacity="0.8" /></svg>
+                        <img src="/Wellness_Logo.png" alt="Wellness Tracker logo" style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
                         <span>Student Wellness App</span>
                     </div>
                     <h1>Student Dashboard</h1>

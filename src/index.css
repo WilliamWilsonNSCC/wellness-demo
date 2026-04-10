@@ -3,6 +3,18 @@
   --page-bg: #FAFCFF;
   --text-color: #213547;
   --font-main: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --nscc-blue: #004780;
+  --nscc-teal: #008ca6;
+  --terra: #b86448;
+  --slate: #526779;
+  --amber: #c28a2e;
+  --parchment: #e7edf3;
+  --warm-white: #fffdf9;
+  --muted: #5d6b78;
+  --sage: #6f8d45;
+  --sage-lt: #e5edd8;
+  --soft: #8d9aa7;
+  --bark: #2e3f4f;
 
   font-family: var(--font-main);
   line-height: 1.5;

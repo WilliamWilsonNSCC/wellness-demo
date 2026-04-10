@@ -209,7 +209,7 @@ export default function Resources() {
                     <p>Build belonging through student groups, peer connection, and campus-based cultural supports.</p>
                     {campusResources?.peerSupport && <div className="resource-note"><strong>Student Association:</strong> {campusResources.peerSupport}</div>}
                     <div className="r-links">
-                        <a href="www.nsccstudentassociation.ca" target="_blank" rel="noreferrer" className="r-btn outline">NSCC Student Association</a>
+                        <a href="https://www.nsccstudentassociation.ca" target="_blank" rel="noreferrer" className="r-btn outline">NSCC Student Association</a>
                         <a href="https://www.nscc.ca/student-experience/cultural-supports/2slgbtq-student-supports.asp" target="_blank" rel="noreferrer" className="r-btn outline">2SLGBTQ+ Supports</a>
                         <a href="https://www.nscc.ca/student-experience/cultural-supports/indigenous-student-supports.asp" target="_blank" rel="noreferrer" className="r-btn outline">Indigenous Student Supports</a>
                     </div>
