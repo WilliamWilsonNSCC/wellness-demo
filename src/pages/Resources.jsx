@@ -166,7 +166,7 @@ export default function Resources() {
                     <p>If you or someone else is in immediate danger or needs support, please reach out using one of these immediate support options.</p>
                     <div className="r-links">
                         <a href="https://988.ca" target="_blank" rel="noreferrer" className="r-btn primary">Suicide Crisis Helpline</a>
-                        <a href="https://mha.nshealth.ca/en/services/information-and-support-telephone-lines" target="_blank" rel="noreferrer" className="r-btn outline">NS Mental Health Crisis Line</a>
+                        <a href="https://mha.nshealth.ca/en/services/provincial-mental-health-and-addictions-crisis-line#access" target="_blank" rel="noreferrer" className="r-btn outline">NS Mental Health Crisis Line</a>
                         <a href="https://good2talk.ca/novascotia/" target="_blank" rel="noreferrer" className="r-btn outline">Good2Talk Nova Scotia</a>
                     </div>
                 </article>
